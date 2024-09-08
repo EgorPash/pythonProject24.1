@@ -13,18 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from materials.views import CourseViewSet
-from materials.views import LessonListCreateAPIView, LessonRetrieveUpdateDestroyAPIView
 
 router = DefaultRouter()
 router.register(r'courses', CourseViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/lessons/', LessonListCreateAPIView.as_view(), name='lesson-list-create'),
-    path('api/lessons/<int:pk>/', LessonRetrieveUpdateDestroyAPIView.as_view(), name='lesson-detail'),
+    path('admin/', admin.site.urls),
+    path('', include('materials.urls', namespace='materials')),
+    path('users/', include('users.urls', namespace='users')),
 ]
 
