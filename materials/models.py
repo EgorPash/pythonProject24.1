@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 class Course(models.Model):
@@ -14,6 +15,9 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='courses', on_delete=models.CASCADE)
+
+
 class Lesson(models.Model):
     objects = None
     name = models.CharField(max_length=200)
@@ -29,3 +33,5 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.name
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='lessons', on_delete=models.CASCADE)
