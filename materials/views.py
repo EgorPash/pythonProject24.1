@@ -4,7 +4,7 @@ from materials.serializers import CourseSerializer
 from rest_framework import generics
 from materials.models import Lesson
 from .serializers import LessonSerializer
-from users.permissions import IsModerator
+from users.permissions import IsModerator, IsOwner
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -13,10 +13,10 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
-            self.permission_classes = [IsAuthenticated]
-        elif self.action in ['update', 'retrieve', 'list']:
-            self.permission_classes = [IsModerator | IsAuthenticated]
+        if self.action in ['create', 'update', 'destroy']:
+            self.permission_classes = [IsAuthenticated, IsOwner]
+        else:
+            self.permission_classes = [IsAuthenticated | IsOwner]  # Для просмотра списка
         return super().get_permissions()
 
     def perform_create(self, serializer):
@@ -32,10 +32,10 @@ class LessonListCreateAPIView(generics.ListCreateAPIView):
         self.action = None
 
     def get_permissions(self):
-        if self.action in ['create']:
-            self.permission_classes = [IsAuthenticated]
+        if self.action in ['create', 'update', 'destroy']:
+            self.permission_classes = [IsAuthenticated, IsOwner]
         else:
-            self.permission_classes = [IsModerator | IsAuthenticated]
+            self.permission_classes = [IsAuthenticated | IsOwner]  # Для просмотра списка
         return super().get_permissions()
 
     def perform_create(self, serializer):

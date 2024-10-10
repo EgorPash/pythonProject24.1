@@ -15,7 +15,8 @@ class Course(models.Model):
     def __str__(self):
         return self.name
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='courses', on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+
 
 
 class Lesson(models.Model):
@@ -34,4 +35,4 @@ class Lesson(models.Model):
     def __str__(self):
         return self.name
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='lessons', on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
