@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from materials.models import Course
 from materials.models import Lesson
@@ -13,10 +14,12 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'destroy']:
+        if self.action in ['update', 'retrieve']:
             self.permission_classes = [IsAuthenticated, IsOwner | IsModerator]  # Владельцы или менеджеры
+        elif self.action == 'create':
+            self.permission_classes = [IsAuthenticated, ~IsModerator]
         else:
-            self.permission_classes = [IsAuthenticated]  # Для просмотра списка
+            self.permission_classes = [IsAuthenticated, IsOwner]
         return super().get_permissions()
 
     def perform_create(self, serializer):
@@ -26,9 +29,11 @@ class CourseViewSet(viewsets.ModelViewSet):
 class LessonListCreateAPIView(generics.ListCreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated]  # Только авторизованные пользователи
 
     def get_permissions(self):
-        self.permission_classes = [IsAuthenticated]  # Только авторизованные пользователи
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated, ~IsModerator]
         return super().get_permissions()
 
     def perform_create(self, serializer):
@@ -39,5 +44,9 @@ class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsOwner]  # Только владельцы могут обновлять и удалять
 
-    def perform_update(self, serializer):
-        serializer.save(owner=self.request.user)  # Убедитесь, что владелец установлен при обновлении
+    def get_permissions(self):
+        if self.action in ['update', 'retrieve']:
+            self.permission_classes = [IsAuthenticated, IsOwner | IsModerator]
+        else:
+            self.permission_classes = [IsAuthenticated, IsOwner]
+        return super().get_permissions()
