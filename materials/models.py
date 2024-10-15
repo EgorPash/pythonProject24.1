@@ -36,3 +36,15 @@ class Lesson(models.Model):
         return self.name
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+
+
+class Subscription(models.Model):
+    objects = None
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'course')  # Убедитесь, что одна подписка на курс
+
+    def __str__(self):
+        return f"{self.user.email} подписан на {self.course.name}"
