@@ -32,7 +32,7 @@ class LessonListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]  # Только авторизованные пользователи
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.request.method == 'GET':
             self.permission_classes = [IsAuthenticated, ~IsModerator]
         return super().get_permissions()
 
@@ -45,7 +45,7 @@ class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwner]  # Только владельцы могут обновлять и удалять
 
     def get_permissions(self):
-        if self.action in ['update', 'retrieve']:
+        if self.request.method in ['GET', 'PATCH', 'PUT']:
             self.permission_classes = [IsAuthenticated, IsOwner | IsModerator]
         else:
             self.permission_classes = [IsAuthenticated, IsOwner]

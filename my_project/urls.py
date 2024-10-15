@@ -18,10 +18,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from materials.views import CourseViewSet
+# from materials.views import CourseViewSet
 
 router = DefaultRouter()
-router.register(r'courses', CourseViewSet)
+# router.register(r'courses', CourseViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

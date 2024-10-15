@@ -1,20 +1,16 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
 from materials.models import Course, Lesson
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    objects = None
+class User(AbstractUser):
+    username = None
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20)
-    city = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20, null=True, blank=True)  # Сделали необязательным
+    city = models.CharField(max_length=100, null=True, blank=True)  # Сделали необязательным
     avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
-
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
