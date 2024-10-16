@@ -2,9 +2,8 @@ from django.conf import settings
 from django.db import models
 
 class Course(models.Model):
-    objects = None
     name = models.CharField(max_length=200)
-    preview = models.ImageField(upload_to='course_previews')
+    preview = models.ImageField(upload_to='course_previews', blank=True, null=True)  # Сделали поле необязательным
     description = models.TextField()
 
     class Meta:
@@ -20,10 +19,9 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    objects = None
     name = models.CharField(max_length=200)
     description = models.TextField()
-    preview = models.ImageField(upload_to='lesson_previews')
+    preview = models.ImageField(upload_to='lesson_previews', blank=True, null=True)  # Сделали поле необязательным
     video_link = models.URLField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
 

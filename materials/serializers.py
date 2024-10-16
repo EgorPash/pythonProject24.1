@@ -15,7 +15,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'preview', 'description', 'lesson_count']
+        fields = ['id', 'name', 'preview', 'description', 'lesson_count', 'lessons']
 
     def get_lesson_count(self, obj):
         return obj.lessons.count()
@@ -25,10 +25,3 @@ class CourseSerializer(serializers.ModelSerializer):
         if request.user.is_authenticated:
             return Subscription.objects.filter(user=request.user, course=obj).exists()
         return False
-
-class LessonSerializer(serializers.ModelSerializer):
-    video_link = serializers.URLField(validators=[validate_youtube_link])
-
-    class Meta:
-        model = Lesson
-        fields = ['id', 'name', 'description', 'preview', 'video_link', 'course']
