@@ -11,6 +11,11 @@ from materials.serializers import CourseSerializer
 from users.permissions import IsOwner, IsModerator
 from .serializers import LessonSerializer
 from .paginators import StandardResultsSetPagination
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .services import create_product, create_price, create_checkout_session
+from users.models import Payment
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -72,3 +77,25 @@ class SubscriptionAPIView(APIView):
             message = 'Подписка удалена'
 
         return Response({"message": message})
+
+
+class PaymentView(APIView):
+    def post(self, request, *args, **kwargs):
+        product_data = request.data.get('product')
+
+        # Создаём продукт и цену в Stripe
+        product = create_product(product_data['name'], product_data['description'])
+        price = create_price(product.id, product_data['amount'])
+
+        # Создаем сессию для оплаты
+        session = create_checkout_session(price.id)
+
+        # Сохраняем платёж
+        payment_record = Payment.objects.create(
+            user=request.user,
+            paid_course=None,  # или заполните по необходимости
+            amount=product_data['amount'],
+            payment_method='stripe',  # Дополнительно
+        )
+
+        return Response({'url': session.url}, status=status.HTTP_201_CREATED)
