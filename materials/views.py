@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .services import create_product, create_price, create_checkout_session
 from users.models import Payment
+from .tasks import send_course_update_email
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -34,6 +35,12 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)  # Устанавливаем владельца
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        subscribers = course.subscribers.all()  # Предполагается, что у Вас есть связь с подписчиками
+        for subscriber in subscribers:
+            send_course_update_email.delay(subscriber.email, course.name)
 
 
 class LessonListCreateAPIView(generics.ListCreateAPIView):
