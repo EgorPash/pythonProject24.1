@@ -10,4 +10,4 @@ class IsOwner(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user  # Предполагается, что поле 'owner' добавлено в модели
+        return obj.owner == request.user
