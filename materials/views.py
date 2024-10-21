@@ -61,7 +61,7 @@ class SubscriptionAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        course_id = request.data.get('course_id')
+        course_id = kwargs.get('id')
         course = get_object_or_404(Course, id=course_id)
         subscription, created = Subscription.objects.get_or_create(user=request.user, course=course)
 

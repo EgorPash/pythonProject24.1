@@ -9,11 +9,12 @@ from rest_framework.test import APIClient
 class CourseAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(
+        self.user = User.objects.create(
             email='test@example.com',
-            password='password123',
             phone='1234567890'
         )
+        self.user.set_password('password123')
+        self.user.save()
         self.course = Course.objects.create(
             name='Test Course',
             description='Test description',
@@ -32,14 +33,14 @@ class CourseAPITests(TestCase):
         response = self.client.post('/courses/', {
             'name': 'New Course',
             'description': 'New description',
-            'preview': None
+            'preview': ''
         })
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_list_courses(self):
         response = self.client.get('/courses/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data['results']), 1)
 
     def test_subscribe_to_course(self):
         response = self.client.post(f'/courses/{self.course.id}/subscribe/')
@@ -47,7 +48,6 @@ class CourseAPITests(TestCase):
         self.assertTrue(Subscription.objects.filter(user=self.user, course=self.course).exists())
 
     def test_unsubscribe_from_course(self):
-        # Сначала подписываемся
         self.client.post(f'/courses/{self.course.id}/subscribe/')
         response = self.client.post(f'/courses/{self.course.id}/unsubscribe/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
