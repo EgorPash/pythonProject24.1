@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'materials',
     'django_filters',
     'rest_framework_simplejwt',
+    'drf_yasg',
 ]
 
 
@@ -102,6 +103,9 @@ DATABASES = {
         'PORT': config('DATABASE_PORT'),
     }
 }
+
+STRIPE_TEST_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')
+STRIPE_TEST_PUBLIC_KEY = config('STRIPE_TEST_PUBLIC_KEY')
 
 AUTH_USER_MODEL = 'users.User'
 
