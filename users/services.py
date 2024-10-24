@@ -15,7 +15,7 @@ def create_price(product_id, amount):
     )
     return price
 
-def create_checkout_session(price_id, success_url, cancel_url):
+def create_checkout_session(price_id):
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=[{
@@ -23,7 +23,5 @@ def create_checkout_session(price_id, success_url, cancel_url):
             'quantity': 1,
         }],
         mode='payment',
-        success_url=success_url,
-        cancel_url=cancel_url,
     )
     return session
