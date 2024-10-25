@@ -26,7 +26,7 @@ class Payment(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     payment_date = models.DateTimeField(auto_now_add=True)
     session_id = models.CharField(max_length=250, null=True, blank=True)
-    session_url = models.TextField()
+    session_url = models.TextField(null=True, blank=True)
     paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     paid_lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)

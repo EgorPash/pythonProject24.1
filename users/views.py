@@ -47,8 +47,8 @@ class PaymentCreateView(CreateAPIView):
         payment = serializer.save()
         course = payment.paid_course
         stripe_product = create_product(course.name)
-        stripe_price = create_price(stripe_product.get('product_id'), payment.amount)
-        stripe_session = create_checkout_session(stripe_price.get('price.id'))
+        stripe_price = create_price(stripe_product.get('id'), payment.amount)
+        stripe_session = create_checkout_session(stripe_price.get('id'))
         payment.session_id = stripe_session.get('id')
         payment.session_url = stripe_session.get('url')
         payment.save()

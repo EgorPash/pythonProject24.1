@@ -9,7 +9,7 @@ def create_product(name):
 
 def create_price(product_id, amount):
     price = stripe.Price.create(
-        unit_amount=amount * 100,  # В Stripe сумма в копейках
+        unit_amount=int(amount * 100),  # В Stripe сумма в копейках
         currency='usd',
         product=product_id,
     )
@@ -23,5 +23,6 @@ def create_checkout_session(price_id):
             'quantity': 1,
         }],
         mode='payment',
+        success_url="https://example.com/success",
     )
     return session
