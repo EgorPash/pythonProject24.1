@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 
 services:
   web:
@@ -8,8 +8,11 @@ services:
     depends_on:
       - db
       - redis
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
 
-db:
+  db:
     image: postgres:13
     restart: always
     environment:
@@ -19,21 +22,21 @@ db:
     ports:
       - "5432:5432"
 
-    redis:
-      image: redis:latest
-      ports:
-        - "6379:6379"
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
 
-    celery:
-      build: .
-      command: celery -A my_project worker --loglevel=info
-      depends_on:
-        - db
-        - redis
+  celery:
+    build: .
+    command: celery -A my_project worker --loglevel=info
+    depends_on:
+      - db
+      - redis
 
-    celery-beat:
-      build: .
-      command: celery -A my_project beat --loglevel=info
-      depends_on:
-        - db
-        - redis
+  celery-beat:
+    build: .
+    command: celery -A my_project beat --loglevel=info
+    depends_on:
+      - db
+      - redis
